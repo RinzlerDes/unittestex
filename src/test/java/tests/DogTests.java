@@ -25,7 +25,7 @@ public class DogTests {
     public void animalTypeTests()
     {
         assertEquals(AnimalType.DOMESTIC, actualDog.getAnimalType(), "Animal Type Expected[" + AnimalType.DOMESTIC
-            + "] Actual[" + actualDog.getAnimalType() + "]");
+                + "] Actual[" + actualDog.getAnimalType() + "]");
     }
 
     @Test
