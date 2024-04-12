@@ -1,5 +1,6 @@
 package animals.petstore.pet;
 
+import animals.petstore.pet.attributes.Breed;
 import animals.petstore.pet.attributes.Gender;
 import animals.petstore.pet.attributes.PetType;
 
@@ -47,6 +48,11 @@ public class Pet extends AbstractPet
     @Override
     public Gender getGender() {
         return this.gender;
+    }
+
+    @Override
+    public Breed getBreed() {
+        return null;
     }
 
     public BigDecimal getCost()

@@ -1,6 +1,7 @@
 package animals.petstore.pet;
 
 import animals.AnimalType;
+import animals.petstore.pet.attributes.Breed;
 import animals.petstore.pet.attributes.Gender;
 import animals.petstore.pet.attributes.PetType;
 import animals.petstore.pet.attributes.Skin;
@@ -23,6 +24,12 @@ public abstract class  AbstractPet {
      * @return {@link Gender}
      */
     public abstract Gender getGender();
+
+    /**
+     * Get the pet's breed
+     * @return {@link Breed}
+     */
+    public abstract Breed getBreed();
 
     /**
      * Is the pet allergy friendly determined by skin type

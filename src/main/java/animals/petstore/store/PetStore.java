@@ -33,20 +33,21 @@ public class PetStore
     /**
      * Initialize the pet inventory list
      */
-    public void init()
-    {
+    public void init() throws DuplicatePetStoreIdException {
         this.addPetInventoryItem(new Dog(AnimalType.DOMESTIC, Skin.FUR, Gender.MALE, Breed.MALTESE,
-                new BigDecimal("750.00"), 3));
+                new BigDecimal("750.00"), 1));
         this.addPetInventoryItem(new Dog(AnimalType.DOMESTIC, Skin.FUR, Gender.MALE, Breed.POODLE,
-                new BigDecimal("650.00"), 1));
+                new BigDecimal("650.00"), 2));
         this.addPetInventoryItem(new Cat(AnimalType.DOMESTIC, Skin.HAIR, Gender.MALE, Breed.BURMESE,
-                new BigDecimal("65.00"),1));
+                new BigDecimal("65.00"), 3));
         this.addPetInventoryItem(new Dog(AnimalType.DOMESTIC, Skin.HAIR, Gender.MALE, Breed.GERMAN_SHEPARD,
-                new BigDecimal("50.00"), 2));
+                new BigDecimal("50.00"), 4));
         this.addPetInventoryItem(new Cat(AnimalType.DOMESTIC, Skin.UNKNOWN, Gender.FEMALE, Breed.SPHYNX,
-                new BigDecimal("100.00"),2));
-
-
+                new BigDecimal("100.00"), 5));
+        this.addPetInventoryItem(new Bird(AnimalType.WILD, Skin.FEATHERS, Gender.FEMALE, Breed.CARDINAL,
+                new BigDecimal("111.00"), 6));
+//        this.addPetInventoryItem(new Bird(AnimalType.WILD, Skin.FEATHERS, Gender.FEMALE, Breed.ROBIN,
+//                new BigDecimal("111.00"), 6));
     }
 
     /**
@@ -60,6 +61,14 @@ public class PetStore
                 .collect(Collectors.toList());
         sortedPets.stream()
                 .forEach(action);
+    }
+
+    public void printInventoryShort() {
+        System.out.println("Inventory---------------------------------------");
+        for(Pet pet : petsForSale) {
+            System.out.println(pet.getBreed() + " " + pet.getPetStoreId());
+        }
+        System.out.println("Inventory---------------------------------------");
     }
 
     /**
@@ -99,9 +108,18 @@ public class PetStore
      * Add item to the inventory list
      * @param pet {@link Pet} to be added to the inventory
      */
-    public void addPetInventoryItem(Pet pet)
-    {
-        this.petsForSale.add(pet);
+    public void addPetInventoryItem(Pet pet) throws DuplicatePetStoreIdException{
+            int id = pet.getPetStoreId();
+            for (Pet p : petsForSale) {
+                int p_id = p.getPetStoreId();
+                if (p_id == id) {
+                    throw new DuplicatePetStoreIdException(
+                        pet.getBreed() + " id: " + id + "\n" +
+                        p.getBreed() + " id: " + p_id + "\n" +
+                        "Can not have two pets with same id.");
+                }
+            }
+            this.petsForSale.add(pet);
     }
 
     /**

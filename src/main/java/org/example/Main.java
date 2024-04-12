@@ -7,11 +7,13 @@ import animals.petstore.pet.attributes.Skin;
 import animals.petstore.pet.types.Cat;
 import animals.petstore.pet.types.Dog;
 import animals.petstore.pet.types.Bird;
+import animals.petstore.store.DuplicatePetStoreIdException;
+import animals.petstore.store.PetStore;
 
 import java.math.BigDecimal;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DuplicatePetStoreIdException {
         System.out.println("Hello world!");
         Dog dog = new Dog(AnimalType.DOMESTIC, Skin.HAIR,Gender.MALE, Breed.POODLE);
         System.out.println(dog.toString());
@@ -22,9 +24,13 @@ public class Main {
         Cat cat = new Cat(AnimalType.DOMESTIC, Skin.FUR, Gender.MALE, Breed.BURMESE);
         System.out.println(cat.toString());
 
-        System.out.println("----------------------------------------");
         Bird bird = new Bird(AnimalType.WILD, Skin.FEATHERS, Gender.MALE, Breed.CARDINAL, new BigDecimal("1.01") , 1);
         System.out.println(bird.toString());
+
+        PetStore petStore = new PetStore();
+        petStore.init();
+        petStore.addPetInventoryItem(bird);
+        petStore.printInventoryShort();
 
     }
 }

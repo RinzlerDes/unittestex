@@ -4,8 +4,10 @@ import animals.AnimalType;
 import animals.petstore.pet.attributes.Breed;
 import animals.petstore.pet.attributes.Gender;
 import animals.petstore.pet.attributes.Skin;
+import animals.petstore.pet.types.Bird;
 import animals.petstore.pet.types.Cat;
 import animals.petstore.pet.types.Dog;
+import animals.petstore.store.DuplicatePetStoreIdException;
 import animals.petstore.store.DuplicatePetStoreRecordException;
 import animals.petstore.store.PetNotFoundSaleException;
 import animals.petstore.store.PetStore;
@@ -29,17 +31,17 @@ public class PetStoreTest
     private static PetStore petStore;
 
     @BeforeEach
-    public void loadThePetStoreInventory()
-    {
+    public void loadThePetStoreInventory() throws DuplicatePetStoreIdException {
         petStore = new PetStore();
         petStore.init();
+        petStore.printInventoryShort();
     }
 
     @Test
     @DisplayName("Inventory Count Test")
     public void validateInventory()
     {
-        assertEquals(5, petStore.getPetsForSale().size(),"Inventory counts are off!");
+        assertEquals(6, petStore.getPetsForSale().size(),"Inventory counts are off!");
     }
 
     @Test
@@ -47,6 +49,40 @@ public class PetStoreTest
     public void printInventoryTest()
     {
         petStore.printInventory();
+    }
+
+    @Test
+    @DisplayName("Add HAWK to Pet Store")
+    public void hawkAddedTest() throws DuplicatePetStoreIdException {
+        int inventorySize = petStore.getPetsForSale().size() + 1;
+        Bird hawk = new Bird(AnimalType.DOMESTIC, Skin.FEATHERS, Gender.MALE, Breed.HAWK,
+                new BigDecimal("222.00"), 7);
+
+        petStore.printInventoryShort();
+
+        petStore.addPetInventoryItem(hawk);
+
+        petStore.printInventoryShort();
+
+        String errStr = "Inventory size is different than expected.";
+        assertEquals(inventorySize, petStore.getPetsForSale().size(), errStr);
+    }
+
+    @Test
+    @DisplayName("Sale of Cardinal Remove Item Test")
+    public void cardinalSoldTest() throws DuplicatePetStoreRecordException, PetNotFoundSaleException {
+        int inventorySize = petStore.getPetsForSale().size() - 1;
+        Bird cardinal = new Bird(AnimalType.WILD, Skin.FEATHERS, Gender.FEMALE, Breed.CARDINAL,
+                new BigDecimal("111.00"),6);
+
+        petStore.printInventoryShort();
+
+        petStore.soldPetItem(cardinal);
+
+        petStore.printInventoryShort();
+
+        String errStr = "Inventory size is different than expected.";
+        assertEquals(inventorySize, petStore.getPetsForSale().size(), errStr);
     }
 
     @Test
@@ -63,18 +99,41 @@ public class PetStoreTest
 
     @Test
     @DisplayName("Poodle Duplicate Record Exception Test")
-    public void poodleDupRecordExceptionTest() {
+    public void poodleDupRecordExceptionTest() throws DuplicatePetStoreIdException {
+        petStore.printInventoryShort();
         petStore.addPetInventoryItem(new Dog(AnimalType.DOMESTIC, Skin.FUR, Gender.MALE, Breed.POODLE,
-                new BigDecimal("650.00"), 1));
+                new BigDecimal("650.00"), 7));
         Dog poodle = new Dog(AnimalType.DOMESTIC, Skin.FUR, Gender.MALE, Breed.POODLE,
-                new BigDecimal("650.00"), 1);
+                new BigDecimal("650.00"), 7);
 
         // Validation
         String expectedMessage = "Duplicate Dog record store id [1]";
         Exception exception = assertThrows(DuplicatePetStoreRecordException.class, () ->{
             petStore.soldPetItem(poodle);});
         assertEquals(expectedMessage, exception.getMessage(), "DuplicateRecordExceptionTest was NOT encountered!");
+        petStore.printInventoryShort();
 
+    }
+
+    @Test
+    @DisplayName("Bird Duplicate Pet Store Id Test")
+    public void birdDuplicateIdExceptionTest() throws DuplicatePetStoreIdException{
+        petStore.printInventoryShort();
+        Bird hawk = new Bird(AnimalType.DOMESTIC, Skin.FEATHERS, Gender.MALE, Breed.HAWK,
+                new BigDecimal("222.00"), 6);
+
+        String expectedMessage = "HAWK id: 6\nCARDINAL id: 6\nCan not have two pets with same id.";
+        Exception exception = assertThrows(DuplicatePetStoreIdException.class, () -> {
+            petStore.addPetInventoryItem(hawk);
+        });
+        assertEquals(expectedMessage, exception.getMessage(), "DuplicatePetStoreIdException NOT encountered.");
+        petStore.printInventoryShort();
+    }
+
+    @Test
+    @DisplayName("Cardinal Duplicate Record Exception Test")
+    public void cardinalDuplicateRecordExceptionTest() {
+        // Print inventory
     }
 
     @Test
