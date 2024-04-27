@@ -1,8 +1,10 @@
 package tests;
 
 import animals.AnimalType;
+import animals.petstore.pet.Pet;
 import animals.petstore.pet.attributes.Breed;
 import animals.petstore.pet.attributes.Gender;
+import animals.petstore.pet.attributes.PetType;
 import animals.petstore.pet.attributes.Skin;
 import animals.petstore.pet.types.Bird;
 import animals.petstore.pet.types.Cat;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 public class PetStoreTest
 {
     private static PetStore petStore;
+    Pet pet = new Pet(PetType.BIRD, new BigDecimal("0.0"), Gender.MALE);
 
     @BeforeEach
     public void loadThePetStoreInventory() throws DuplicatePetStoreIdException {
@@ -108,6 +111,7 @@ public class PetStoreTest
 
         // Validation
         String expectedMessage = "Duplicate Dog record store id [1]";
+        // No more duplicate ids in store so this test will fail
         Exception exception = assertThrows(DuplicatePetStoreRecordException.class, () ->{
             petStore.soldPetItem(poodle);});
         assertEquals(expectedMessage, exception.getMessage(), "DuplicateRecordExceptionTest was NOT encountered!");
@@ -148,6 +152,48 @@ public class PetStoreTest
         // Validation
         assertEquals(inventorySize, petStore.getPetsForSale().size(), "Expected inventory does not match actual");
         assertEquals(sphynx.getPetStoreId(), removedItem.getPetStoreId(), "The cat items are identical");
+    }
+
+    @Test
+    @DisplayName("First Pet Constructor")
+    public void petConstructor() {
+        assertNotNull(pet, "The pet was not created.");
+    }
+
+    @TestFactory
+    @DisplayName("Pet Set and Get Tests")
+    public Stream<DynamicTest> petGetSetTests() {
+//        this.addPetInventoryItem(new Bird(AnimalType.WILD, Skin.FEATHERS, Gender.FEMALE, Breed.CARDINAL,
+//                new BigDecimal("111.00"), 6));
+        Pet bird = petStore.getPetsForSale().get(5);
+
+        bird.setPetStoreId(10);
+
+        //List<DynamicNode> nodes = new ArrayList<>();
+        List<DynamicTest> tests = Arrays.asList(
+                dynamicTest("Get Pet Gender", () -> assertEquals(Gender.FEMALE, bird.getGender())),
+                dynamicTest("Get Breed", () -> assertEquals(Breed.CARDINAL, bird.getBreed())),
+                dynamicTest("Get Cost", () -> assertEquals(new BigDecimal("111.00"), bird.getCost())),
+                dynamicTest("Set Pet Store Id", () -> assertEquals(10, bird.getPetStoreId()))
+        );
+        return tests.stream();
+    }
+
+    @Test
+    @DisplayName("Pet toString With Id 0")
+    public void petToStringNoId() {
+        String testStr = "The type of pet is BIRD!\n" +
+                "The BIRD gender is MALE!\n" +
+                "The BIRD cost is $0.0!\n";
+        assertEquals(testStr, pet.toString(), "toString doesn't match");
+    }
+
+    @Test
+    @DisplayName("Pet Not Found Sale Exception")
+    public void petNotFoundSaleExceptionTest() throws DuplicatePetStoreIdException {
+        petStore.addPetInventoryItem(pet);
+        assertThrows(PetNotFoundSaleException.class, () ->
+            petStore.soldPetItem(pet));
     }
 
     /**

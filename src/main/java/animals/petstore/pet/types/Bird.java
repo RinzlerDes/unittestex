@@ -27,7 +27,7 @@ public class Bird extends Pet implements PetImpl {
        super(PetType.BIRD, cost, gender, petStoreId);
        super.skinType = skin;
        super.animalType = animalType;
-       this.numberOfLegs = 4;
+       this.numberOfLegs = 2;
        this.breed = breed;
     }
 
@@ -72,8 +72,6 @@ public class Bird extends Pet implements PetImpl {
 
     public Breed getBreed() {return this.breed;}
 
-    private String numberOfLegs() {return "Birds have " + numberOfLegs + " legs.";};
-
     public int getNumberOfLegs() {return numberOfLegs;}
 
     public void setNumberOfLegs(int numberOfLegs) {this.numberOfLegs = numberOfLegs;}
@@ -85,10 +83,10 @@ public class Bird extends Pet implements PetImpl {
     public String toString() {
         return super.toString() +
                 "The bird is " + this.animalType + ".\n" +
-                "breed is " + this.breed + ".\n" +
+                "The breed is " + this.breed + ".\n" +
                 this.birdHypoallergenic() + "\n" +
                 this.speak() + "\n" +
-                this.numberOfLegs();
+                "Birds have " + this.numberOfLegs + " legs!";
     }
 }
 
